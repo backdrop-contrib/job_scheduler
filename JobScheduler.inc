@@ -167,6 +167,9 @@ class JobScheduler {
       $job['last'] = REQUEST_TIME;
       $this->reschedule($job);
     }
+    if (!empty($info['file']) && file_exists($info['file'])) {
+      include_once $info['file'];
+    }
     if (function_exists($info['worker callback'])) {
       call_user_func($info['worker callback'], $job);
     }
