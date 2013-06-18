@@ -64,6 +64,7 @@ function job_scheduler_cron() {
             ->range(0, 200)
             ->execute();
   foreach ($jobs as $job) {
+    $job['data'] = unserialize($job['data']);
     try {
       JobScheduler::get($job['name'])->dispatch($job);
     }
