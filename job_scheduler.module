@@ -80,8 +80,14 @@ function job_scheduler_cron() {
     }
   }
 
-  // Leave a note on how much time we spent processing.
-  watchdog('job_scheduler', 'Finished processing scheduled jobs (!time s, !total total, !failed failed).', array('!time' => format_interval(time() - $start), '!total' => $total, '!failed' => $failed));
+  // If any jobs were processed, log how much time we spent processing.
+  if ($total || $failed) {
+    watchdog('job_scheduler', 'Finished processing scheduled jobs (!time, !total total, !failed failed).', array(
+      '!time' => format_interval(time() - $start),
+      '!total' => $total,
+      '!failed' => $failed,
+    ));
+  }
 }
 
 /**
