@@ -62,8 +62,12 @@ class JobScheduler {
    *   An array that must contain the following keys:
    *   'type'     - A string identifier of the type of job.
    *   'id'       - A numeric identifier of the job.
-   *   'period'   - The time when the task should be executed.
    *   'periodic' - True if the task should be repeated periodically.
+   *
+   *   The array must also contain one of the following keys:
+   *   'period'  - The time when the task should be executed.
+   *   'crontab' - A crontab entry which describes the times a task should be
+   *               executed.
    *
    * @code
    * function worker_callback($job) {
