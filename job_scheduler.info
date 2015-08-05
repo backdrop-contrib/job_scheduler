@@ -1,0 +1,5 @@
+name = Job Scheduler
+description = Scheduler API
+backdrop = 1.x
+version = BACKDROP_VERSION
+type = module
