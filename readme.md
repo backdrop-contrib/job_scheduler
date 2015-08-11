@@ -29,9 +29,9 @@ TESTED
 KNOWN ISSUES
 ---------------------
 
-This module usually only works in support of Feeds module.
-Feeds module does not work in Backdrop yet because it depended on CTools in Drupal 7 and parts of CTools are in Backdrop core
-but I am not sure which parts and how to access them.
+This module has undergone the usual porting to Backdrop, but I am only aware of its usefulness as an API in support of Feeds module.
+
+Feeds module does not work in Backdrop yet because it depended on CTools in Drupal 7 and parts of CTools are in Backdrop core and I am not sure which parts and how to access them yet.
 
 SPECIAL THANKS
 --------------
