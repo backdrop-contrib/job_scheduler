@@ -1,6 +1,8 @@
 JOB SCHEDULER
 ===================
 
+Simple API for scheduling tasks once at a predetermined time or periodically at a fixed interval.
+
 CONTENTS OF THIS FILE
 ---------------------
 
@@ -15,11 +17,6 @@ CONTENTS OF THIS FILE
  - License
  - Credits
  - Maintainers
-
-INTRODUCTION
-------------
-
-Simple API for scheduling tasks once at a predetermined time or periodically at a fixed interval.
 
 TESTED
 -----
