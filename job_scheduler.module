@@ -174,3 +174,12 @@ function job_scheduler_cron_queue_worker($job) {
     JobScheduler::get($job['name'])->remove($job);
   }
 }
+
+
+function job_scheduler_autoload_info() {
+  return array(
+    'JobSchedulerException' => 'JobSchedulerException.inc',
+    'JobScheduler' => 'JobScheduler.inc',
+    'JobSchedulerCronTab' => 'JobSchedulerCronTab.inc',
+  );
+}
