@@ -26,7 +26,13 @@ class JobScheduler {
     static $schedulers;
     // Instantiante a new scheduler for $name if we haven't done so yet.
     if (!isset($schedulers[$name])) {
-      $class = config_get('job_scheduler.settings', 'job_scheduler_class_' . $name);
+      $config = config('job_scheduler.settings');
+      $class = '';
+      if(!$class = $config->get('job_scheduler_class_' . $name)) {
+        $class = 'JobScheduler';
+        $config->set('job_scheduler_class_' . $name, $class);
+        $config->save();
+      }
       $schedulers[$name] = new $class($name);
     }
     return $schedulers[$name];
