@@ -43,7 +43,8 @@ class JobSchedulerCronTab {
    */
   public static function parse($crontab) {
     // Crontab elements, names match PHP date indexes (getdate)
-    $keys = array('minutes', 'hours', 'mday', 'mon', 'wday');
+    // Example: 
+    // $keys = array('minutes', 'hours', 'mday', 'mon', 'wday');
     // Replace multiple spaces by single space
     $crontab = preg_replace('/(\s+)/', ' ', $crontab);
     // Expand into elements and parse all
