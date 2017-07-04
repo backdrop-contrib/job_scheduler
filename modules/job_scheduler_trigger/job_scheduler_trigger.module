@@ -36,7 +36,7 @@ function job_scheduler_trigger_menu() {
     'file' => 'job_scheduler_trigger.admin.inc',
   );
   $items['admin/config/system/job_scheduler/add'] = array(
-    'title' => 'Trigger scheduler',
+    'title' => 'Add a new trigger',
     'description' => 'Configure timely triggers',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('job_scheduler_trigger_edit_form', NULL),
