@@ -215,7 +215,7 @@ class JobScheduler {
       drupal_write_record('job_schedule', $job, array('item_id'));
     }
     else {
-      // If no next time, it may mean it wont run again the next year (crontab)
+      // If no next time, it may mean it won't run again the next year (crontab)
       $this->remove($job);
     }
   }
