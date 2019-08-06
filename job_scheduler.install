@@ -10,9 +10,7 @@
  */
 function job_scheduler_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE :name", array(':name' => 'job_scheduler_class_%'));
-  $config = config('job_scheduler.settings');
-  $config->set('job_scheduler_rebuild_all', "");
-  $config->save();
+  state_del('job_scheduler_rebuild_all');
 }
 
 /**
@@ -126,4 +124,17 @@ function job_scheduler_update_1000() {
 
   // Delete variables.
   update_variable_del('job_scheduler_rebuild_all');
+}
+
+/**
+ * Use state rather than config for job_scheduler_rebuild_all.
+ */
+function job_scheduler_update_1001() {
+  $config = config('job_scheduler.settings');
+  $state = $config->get('job_scheduler_rebuild_all');
+  if ($state !== NULL) {
+    state_set('job_scheduler_rebuild_all', $state);
+  }
+  $config->clear('job_scheduler_rebuild_all');
+  $config->save();
 }

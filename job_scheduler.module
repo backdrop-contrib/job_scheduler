@@ -30,26 +30,15 @@ function job_scheduler_info($name = NULL) {
 }
 
 /**
- * Implements hook_config_info().
- */
-function job_scheduler_config_info() {
-  $prefixes['job_scheduler.settings'] = array(
-    'label' => t('job_scheduler settings'),
-    'group' => t('Configuration'),
-  );
-  return $prefixes;
-}
-
-/**
  * Implements hook_cron().
  */
 function job_scheduler_cron() {
   // Reschedule all jobs if requested.
-  if (config_get('job_scheduler.settings', 'job_scheduler_rebuild_all')) {
+  if (state_get('job_scheduler_rebuild_all')) {
     foreach (job_scheduler_info() as $name => $info) {
       job_scheduler_rebuild_scheduler($name, $info);
     }
-    config_set('job_scheduler.settings', 'job_scheduler_rebuild_all', FALSE);
+    state_set('job_scheduler_rebuild_all', FALSE);
     return;
   }
 
@@ -121,7 +110,7 @@ function job_scheduler_modules_disabled($modules) {
  * @todo What should we do about missing ones when disabling their module?
  */
 function job_scheduler_rebuild_all() {
-  config_set('job_scheduler.settings', 'job_scheduler_rebuild_all', TRUE);
+  state_set('job_scheduler_rebuild_all', TRUE);
 }
 
 /**
