@@ -30,6 +30,17 @@ function job_scheduler_info($name = NULL) {
 }
 
 /**
+ * Implements hook_config_info().
+ */
+function job_scheduler_config_info() {
+  $prefixes['job_scheduler.settings'] = array(
+    'label' => t('Job scheduler settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_cron().
  */
 function job_scheduler_cron() {
