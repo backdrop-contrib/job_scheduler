@@ -10,7 +10,7 @@
  */
 function job_scheduler_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE :name", array(':name' => 'job_scheduler_class_%'));
-  variable_del('job_scheduler_rebuild_all');
+  state_del('job_scheduler_rebuild_all');
 }
 
 /**
@@ -116,76 +116,25 @@ function job_scheduler_schema() {
   return $schema;
 }
 
-/**
- * Fix indexes on next.
- */
-function job_scheduler_update_6101() {
-  $ret = array();
-  db_drop_index($ret, 'job_schedule', 'last_period');
-  db_drop_index($ret, 'job_schedule', 'periodic');
-  db_add_index($ret, 'job_schedule', 'next', array('next'));
-  return $ret;
+
+function job_scheduler_update_1000() {
+  $config = config('job_scheduler.settings');
+  $config->set('job_scheduler_rebuild_all', update_variable_get('job_scheduler_rebuild_all'));
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('job_scheduler_rebuild_all');
 }
 
 /**
- * Rename 'callback' to 'name' field.
+ * Use state rather than config for job_scheduler_rebuild_all.
  */
-function job_scheduler_update_7100() {
-  db_drop_index('job_schedule', 'callback_type_id');
-  db_drop_index('job_schedule', 'callback_type');
-  $spec = array(
-    'type' => 'varchar',
-    'length' => 128,
-    'not null' => TRUE,
-    'default' => '',
-    'description' => 'Name of the schedule.',
-  );
-  db_change_field('job_schedule', 'callback', 'name', $spec);
-  db_add_index('job_schedule', 'name_type_id', array('name', 'type', 'id'));
-  db_add_index('job_schedule', 'name_type', array('name', 'type'));
-}
-
-/**
- * Add fields: item_id, crontab, data, expire
- */
-function job_scheduler_update_7101() {
-  $spec = array(
-    'type' => 'varchar',
-    'length' => 255,
-    'not null' => TRUE,
-    'default' => '',
-    'description' => 'Crontab line in *NIX format.',
-  );
-  db_add_field('job_schedule', 'crontab', $spec);
-  $spec = array(
-    'type' => 'blob',
-    'not null' => FALSE,
-    'size' => 'big',
-    'serialize' => TRUE,
-    'description' => 'The arbitrary data for the item.',
-  );
-  db_add_field('job_schedule', 'data', $spec);
-  $spec = array(
-    'type' => 'int',
-    'not null' => TRUE,
-    'default' => 0,
-    'description' => 'Timestamp when job expires.',
-  );
-  db_add_field('job_schedule', 'expire', $spec);
-  $spec = array(
-    'type' => 'serial',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'description' => 'Primary Key: Unique item ID.',
-  );
-  db_add_field('job_schedule', 'item_id', $spec, array('primary key' => array('item_id')));
-}
-
-/**
- * Drop field: created.
- */
-function job_scheduler_update_7102() {
-  if (db_field_exists('job_schedule', 'created')) {
-    db_drop_field('job_schedule', 'created');
+function job_scheduler_update_1001() {
+  $config = config('job_scheduler.settings');
+  $state = $config->get('job_scheduler_rebuild_all');
+  if ($state !== NULL) {
+    state_set('job_scheduler_rebuild_all', $state);
   }
+  $config->clear('job_scheduler_rebuild_all');
+  $config->save();
 }

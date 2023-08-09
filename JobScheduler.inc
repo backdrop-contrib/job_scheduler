@@ -26,7 +26,13 @@ class JobScheduler {
     static $schedulers;
     // Instantiante a new scheduler for $name if we haven't done so yet.
     if (!isset($schedulers[$name])) {
-      $class = variable_get('job_scheduler_class_' . $name, 'JobScheduler');
+      $config = config('job_scheduler.settings');
+      $class = '';
+      if(!$class = $config->get('job_scheduler_class_' . $name)) {
+        $class = 'JobScheduler';
+        $config->set('job_scheduler_class_' . $name, $class);
+        $config->save();
+      }
       $schedulers[$name] = new $class($name);
     }
     return $schedulers[$name];
@@ -91,7 +97,7 @@ class JobScheduler {
     }
     $job['scheduled'] = 0;
     $this->remove($job);
-    drupal_write_record('job_schedule', $job);
+    backdrop_write_record('job_schedule', $job);
   }
 
   /**
@@ -102,7 +108,7 @@ class JobScheduler {
     $job['scheduled'] =
     $job['last'] = REQUEST_TIME;
     $job['next'] = $job['period'] + REQUEST_TIME;
-    drupal_write_record('job_schedule', $job, array('name', 'type', 'id'));
+    backdrop_write_record('job_schedule', $job, array('name', 'type', 'id'));
   }
 
   /**
@@ -146,7 +152,7 @@ class JobScheduler {
       $this->remove($job);
     }
     if (!empty($info['queue name'])) {
-      if (DrupalQueue::get($info['queue name'])->createItem($job)) {
+      if (BackdropQueue::get($info['queue name'])->createItem($job)) {
         $this->reserve($job);
       }
     }
@@ -200,7 +206,7 @@ class JobScheduler {
     }
 
     if ($job['next']) {
-      drupal_write_record('job_schedule', $job, array('item_id'));
+      backdrop_write_record('job_schedule', $job, array('item_id'));
     }
     else {
       // If no next time, it may mean it wont run again the next year (crontab)

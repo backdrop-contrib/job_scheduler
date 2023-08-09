@@ -16,10 +16,10 @@
  *   Information for the schedule if $name, all the information if not
  */
 function job_scheduler_info($name = NULL) {
-  $info = &drupal_static(__FUNCTION__);
+  $info = &backdrop_static(__FUNCTION__);
   if (!$info) {
     $info = module_invoke_all('cron_job_scheduler_info');
-    drupal_alter('cron_job_scheduler_info', $info);
+    backdrop_alter('cron_job_scheduler_info', $info);
   }
   if ($name) {
     return isset($info[$name]) ? $info[$name] : NULL;
@@ -30,15 +30,26 @@ function job_scheduler_info($name = NULL) {
 }
 
 /**
+ * Implements hook_config_info().
+ */
+function job_scheduler_config_info() {
+  $prefixes['job_scheduler.settings'] = array(
+    'label' => t('Job scheduler settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_cron().
  */
 function job_scheduler_cron() {
   // Reschedule all jobs if requested.
-  if (variable_get('job_scheduler_rebuild_all', FALSE)) {
+  if (state_get('job_scheduler_rebuild_all')) {
     foreach (job_scheduler_info() as $name => $info) {
       job_scheduler_rebuild_scheduler($name, $info);
     }
-    variable_set('job_scheduler_rebuild_all', FALSE);
+    state_set('job_scheduler_rebuild_all', FALSE);
     return;
   }
 
@@ -110,7 +121,7 @@ function job_scheduler_modules_disabled($modules) {
  * @todo What should we do about missing ones when disabling their module?
  */
 function job_scheduler_rebuild_all() {
-  variable_set('job_scheduler_rebuild_all', TRUE);
+  state_set('job_scheduler_rebuild_all', TRUE);
 }
 
 /**
@@ -162,4 +173,13 @@ function job_scheduler_cron_queue_worker($job) {
     // Drop jobs that have caused exceptions
     JobScheduler::get($job['name'])->remove($job);
   }
+}
+
+
+function job_scheduler_autoload_info() {
+  return array(
+    'JobSchedulerException' => 'JobSchedulerException.inc',
+    'JobScheduler' => 'JobScheduler.inc',
+    'JobSchedulerCronTab' => 'JobSchedulerCronTab.inc',
+  );
 }

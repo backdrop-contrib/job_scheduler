@@ -38,14 +38,14 @@ function hook_cron_job_scheduler_info() {
 /**
  * Alter cron queue information before cron runs.
  *
- * Called by drupal_cron_run() to allow modules to alter cron queue settings
+ * Called by backdrop_cron_run() to allow modules to alter cron queue settings
  * before any jobs are processesed.
  *
  * @param array $info
  *   An array of cron schedule information.
  *
  * @see hook_cron_queue_info()
- * @see drupal_cron_run()
+ * @see backdrop_cron_run()
  */
 function hook_cron_job_scheduler_info_alter(&$info) {
   // Replace the default callback 'example_cache_clear_worker'
