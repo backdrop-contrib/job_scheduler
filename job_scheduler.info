@@ -1,5 +1,4 @@
 name = Job Scheduler
 description = Scheduler API
 backdrop = 1.x
-version = 1.x-1.1
 type = module

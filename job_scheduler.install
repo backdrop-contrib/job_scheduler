@@ -5,11 +5,14 @@
  * Schema definitions install/update/uninstall hooks.
  */
 
-/*
- * Implementation hook_uninstall().
+/**
+ * Implements hook_uninstall().
  */
 function job_scheduler_uninstall() {
-  db_query("DELETE FROM {variable} WHERE name LIKE :name", array(':name' => 'job_scheduler_class_%'));
+  db_delete('variable')
+    ->condition('name', 'job_scheduler_class_%', 'like')
+    ->execute();
+
   state_del('job_scheduler_rebuild_all');
 }
 
@@ -117,6 +120,9 @@ function job_scheduler_schema() {
 }
 
 
+/**
+ *
+ */
 function job_scheduler_update_1000() {
   $config = config('job_scheduler.settings');
   $config->set('job_scheduler_rebuild_all', update_variable_get('job_scheduler_rebuild_all'));
@@ -134,7 +140,14 @@ function job_scheduler_update_1001() {
   $state = $config->get('job_scheduler_rebuild_all');
   if ($state !== NULL) {
     state_set('job_scheduler_rebuild_all', $state);
+    $config->clear('job_scheduler_rebuild_all');
+    $config->save();
   }
-  $config->clear('job_scheduler_rebuild_all');
-  $config->save();
+}
+
+/**
+ * Implement hook_update_last_removed().
+ */
+function job_scheduler_update_last_removed() {
+  return 7102;
 }
